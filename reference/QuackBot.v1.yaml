@@ -1,0 +1,251 @@
+openapi: 3.0.0
+info:
+  title: QuackBot
+  version: '2.0'
+  description: |-
+    V2 Of the QuackBotAPI
+
+    This API has two main parts.
+    The first part allows intergration between Twitch / Youtube* and Discord. Allowing you to post messages from Chat, For instance the /Quote endpoint could be used to post reminders into discord channel.
+    The Second part is more for fun / interesting stuff, Like /Translate will translate a given message into a given lanuage. 
+
+
+    To add Quackers go here 
+    https://api.m2s.bz/QuackAPI
+
+    To Get Twitch IDs
+    https://api.m2s.bz/TwitchID
+
+    To Get Discord Channel ID
+    https://github.com/MACH2Simulations/PublicWiki/wiki/Discord-Channel-ID
+  contact:
+    name: MACH 2 Simulations
+    url: 'https://TheGatewayToANewWorld.com'
+    email: Machy@TheGatewayToANewWorld.com
+servers:
+  - url: 'https://api.m2s.bz/api'
+paths:
+  /Clips:
+    post:
+      summary: ''
+      operationId: post-Clips
+      responses:
+        '200':
+          description: OK
+      description: |-
+        This allows you to create a clip using a command and have this posted to Discord
+
+        By Default the clips are created by QuackersTheDuckBot and if you wish to use yourself or your own bot user then you need to get the Bearer token from https://api.m2s.bz/TwitchToken and add it to the request. 
+        Note UNTIL FURTHER NOTICE YOU WILL HAVE TO REGENERATE THIS REGULARLY
+
+        Due to limits with the twitch api
+        YOU SHOULD SET IT SO THIS COMMAND CAN ONLY BE CALLED ONCE EVERY 45 SECONDS 
+        All clips are 30 seconds
+        You cannot Set titles to clips
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: TwitchID
+          description: 'Twitch ID (NOT NAME) Of the channel to be clipped '
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Bear
+          description: Token to use custom bot for clipping
+        - schema:
+            type: string
+          in: query
+          name: ChannelID
+          description: Discord Channel ID of where you want clips posted
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Code
+          description: API Key
+          required: true
+  /Quote:
+    post:
+      summary: ''
+      operationId: post-Quote
+      responses:
+        '200':
+          description: OK
+      description: |-
+        This takes a message from chat and posts it in a give Discord Channel
+        This requies the Discord bot to be added to your Discord
+
+        This can also pull a random Quote from the same channel
+
+        Name, Quote, Reply, Info are not needed when using Rand mode
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: Mode
+          required: true
+          description: Rand or Quote
+        - schema:
+            type: string
+          in: query
+          name: ChannelID
+          description: Discord Channel ID of where you want clips posted or to read from
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Name
+          description: Name of the user submitting
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Quote
+          description: The Message
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Info
+          required: true
+          description: Message to add into discord is "Added By Name" ---- Requires + in spaces
+        - schema:
+            type: string
+          in: query
+          name: Reply
+          description: Message to reply in chat "Message has been Added to" ---- Requires + in spaces
+          required: true
+        - schema:
+            type: string
+          in: query
+          required: true
+          name: Code
+          description: API Key
+  /TwitchID:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-TwitchID
+      description: This gets the TwitchID Of a current user
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: Username
+          description: The Username of the streamer
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Code
+          description: API Key
+  /Translate:
+    post:
+      summary: ''
+      operationId: post-Translate
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Passes through a message to the google translate API, and returns a translated messaged
+
+        Requires messages to be 
+        Message @ LanguageCode
+        The lanugae codes can be found here
+        https://cloud.google.com/translate/docs/languages
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: Message
+          description: The message and language code to be translated
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Code
+          description: API Key
+          required: true
+  /Search:
+    post:
+      summary: ''
+      operationId: post-Search
+      responses:
+        '200':
+          description: OK
+      description: |-
+        This passes a message through to the google search API and returns the "Im Feeling Lucky result"
+
+        Requires Google Search API Key from here
+        https://developers.google.com/custom-search/v1/overview
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: Key
+          description: Google Search API Key
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Term
+          description: The message to be searched
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Code
+          description: API Key
+          required: true
+  /Live:
+    post:
+      summary: ''
+      operationId: post-Live
+      responses:
+        '200':
+          description: OK
+      description: |-
+        This will post a live notifcation into discord when called
+        Will fail / Post gibberish if called when Specified channel is offline 
+
+        It will also pull the preview image from stream 
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: TwitchID
+          description: Twitch ID of the channel
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: ChannelID
+          description: ChannelID of the channel to be posted in
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: Code
+          description: API Key
+          required: true
+  /Alive:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+      operationId: get-Alive
+      description: Check if API Is alive and working
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: code
+          description: API Key
+components:
+  schemas: {}
